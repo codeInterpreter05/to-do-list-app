@@ -1,5 +1,6 @@
 import React from 'react'
 import { useState} from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 const Card = () => {
   const [inputTodo, setInputTodo] = useState("");
@@ -10,9 +11,19 @@ const Card = () => {
   }
 
   const handleAdd = (event) => {
-    setUserTodos([...userTodos, {inputTodo}]);
+    setUserTodos([...userTodos, {id: uuidv4(), inputTodo, isCompleted: false}]);
     setInputTodo("");
   }
+
+  const handleTickChange = (event) => {
+    let id = event.target.name;
+    let index = userTodos.findIndex((item) => {
+      return item.id == id;
+    })
+    let newTodos = [...userTodos];
+    newTodos[index].isCompleted = !newTodos[index].isCompleted;
+    setUserTodos(newTodos);
+  } 
 
   return (
     <div className='card bg-[#FFFFFF] h-auto max-h-[90%] w-[50%] min-w-[280px] p-5 rounded-xl'>
@@ -24,8 +35,10 @@ const Card = () => {
       {userTodos.map((item) => (
         <>
           <div className='w-[100%] px-4 flex justify-evenly items-center my-5'>
-            <div className="left flex justify-start items-start w-[90%]">
-              <span className="todoName text-xl text-[#002675] font-semibold">{item.inputTodo}</span>
+            <div className="left flex justify-start items-center gap-2 w-[90%]">
+              <input onChange={handleTickChange} type="checkbox" className='h-5 w-5 rounded-full' value={item.isCompleted} name={item.id} id="" />
+              <span className={`todoName text-xl text-[#002675] font-semibold ${item.isCompleted ? "line-through" : ""}`}>{item.inputTodo}</span>
+
             </div>
             <div className="right flex justify-end gap-3 items-center w-[15%]">
               <button><i className="fa-solid fa-pen-to-square text-[#002675] text-xl"></i></button>
